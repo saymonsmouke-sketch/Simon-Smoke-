@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Дракон Саймон Смоук</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Unbounded:wght@400;700;900&family=Raleway:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blood: #8B0000;
+    --crimson: #DC143C;
+    --gold: #C9A83C;
+    --gold-bright: #FFD700;
+    --bone: #F5E6C8;
+    --dark: #0A0A0A;
+    --dark2: #111111;
+    --dark3: #1A1010;
+    --smoke: #2A2A2A;
+    --text: #D4C5B0;
+    --accent: #FF2222;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'Raleway', sans-serif;
+    overflow-x: hidden;
+    cursor: crosshair;
+  }
+
+  /* Noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background: radial-gradient(ellipse at 50% 30%, #2a0505 0%, #0f0000 40%, var(--dark) 100%);
+    padding: 60px 20px;
+    overflow: hidden;
+    text-align: center;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(139,0,0,0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 50%, rgba(201,168,60,0.08) 0%, transparent 50%);
+  }
+
+  /* Animated cracks/scales background */
+  .scales-bg {
+    position: absolute;
+    inset: 0;
+    opacity: 0.04;
+    background-image: 
+      repeating-linear-gradient(60deg, transparent, transparent 30px, rgba(220,20,60,0.5) 30px, rgba(220,20,60,0.5) 31px),
+      repeating-linear-gradient(-60deg, transparent, transparent 30px, rgba(220,20,60,0.5) 30px, rgba(220,20,60,0.5) 31px);
+  }
+
+  .warning-strip {
+    display: flex;
+    gap: 40px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.3em;
+    color: var(--crimson);
+    margin-bottom: 50px;
+    position: relative;
+    z-index: 2;
+    animation: flicker 3s infinite;
+  }
+
+  @keyframes flicker {
+    0%, 95%, 100% { opacity: 1; }
+    96% { opacity: 0.6; }
+    97% { opacity: 1; }
+    98% { opacity: 0.4; }
+    99% { opacity: 1; }
+  }
+
+  .warning-strip span::before { content: '⚠ '; }
+
+  .hero-title {
+    position: relative;
+    z-index: 2;
+    margin-bottom: 10px;
+  }
+
+  .hero-title .label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(0.9rem, 2vw, 1.2rem);
+    letter-spacing: 0.5em;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  .hero-title h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: clamp(3rem, 10vw, 8rem);
+    line-height: 0.9;
+    text-transform: uppercase;
+    color: transparent;
+    -webkit-text-stroke: 2px var(--crimson);
+    text-shadow: 
+      0 0 30px rgba(220,20,60,0.5),
+      0 0 80px rgba(139,0,0,0.3);
+    letter-spacing: -0.02em;
+    animation: pulse-glow 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulse-glow {
+    from { text-shadow: 0 0 30px rgba(220,20,60,0.5), 0 0 80px rgba(139,0,0,0.3); }
+    to { text-shadow: 0 0 50px rgba(220,20,60,0.8), 0 0 120px rgba(139,0,0,0.6), 0 0 200px rgba(220,20,60,0.2); }
+  }
+
+  .hero-title h1 span {
+    color: var(--gold);
+    -webkit-text-stroke: 2px var(--gold);
+  }
+
+  .hero-subtitle {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1rem, 3vw, 1.8rem);
+    letter-spacing: 0.4em;
+    color: var(--bone);
+    opacity: 0.6;
+    margin-top: 16px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .divider {
+    width: 80px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--crimson), transparent);
+    margin: 40px auto;
+    position: relative;
+    z-index: 2;
+  }
+
+  .divider.gold {
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  /* CONTENT */
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* SECTION */
+  .section {
+    padding: 80px 24px;
+    position: relative;
+  }
+
+  .section-label {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.5em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    opacity: 0.4;
+  }
+
+  .section-title {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: clamp(1.8rem, 5vw, 3.5rem);
+    text-transform: uppercase;
+    line-height: 1;
+    margin-bottom: 32px;
+    color: var(--bone);
+  }
+
+  .section-title .red { color: var(--crimson); }
+  .section-title .gold { color: var(--gold); }
+
+  /* INTRO CARD */
+  .intro-card {
+    background: linear-gradient(135deg, rgba(139,0,0,0.15), rgba(10,10,10,0.8));
+    border: 1px solid rgba(220,20,60,0.3);
+    border-left: 4px solid var(--crimson);
+    padding: 40px;
+    margin-bottom: 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .intro-card::before {
+    content: '🐉';
+    position: absolute;
+    right: 20px;
+    top: 20px;
+    font-size: 4rem;
+    opacity: 0.1;
+  }
+
+  .intro-card p {
+    font-size: 1.15rem;
+    line-height: 1.9;
+    color: var(--text);
+    font-weight: 300;
+  }
+
+  .intro-card p strong {
+    color: var(--crimson);
+    font-weight: 700;
+  }
+
+  /* WARNING BLOCK */
+  .warning-block {
+    background: rgba(139,0,0,0.08);
+    border: 1px solid rgba(220,20,60,0.4);
+    padding: 32px 40px;
+    margin: 40px 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 20px;
+    text-align: center;
+  }
+
+  .warning-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .warning-item .icon {
+    font-size: 2rem;
+    filter: grayscale(0.3);
+  }
+
+  .warning-item strong {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: var(--crimson);
+    text-transform: uppercase;
+  }
+
+  /* APPEARANCE */
+  .appearance-bg {
+    background: linear-gradient(180deg, var(--dark) 0%, var(--dark3) 50%, var(--dark) 100%);
+  }
+
+  .trait-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 40px;
+  }
+
+  .trait-card {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(201,168,60,0.2);
+    padding: 28px;
+    position: relative;
+    transition: border-color 0.3s, background 0.3s;
+  }
+
+  .trait-card:hover {
+    border-color: rgba(220,20,60,0.5);
+    background: rgba(139,0,0,0.08);
+  }
+
+  .trait-card .trait-icon {
+    font-size: 2rem;
+    margin-bottom: 14px;
+    display: block;
+  }
+
+  .trait-card h3 {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+
+  .trait-card p {
+    font-size: 0.95rem;
+    line-height: 1.7;
+    color: var(--text);
+    font-weight: 300;
+  }
+
+  /* QUOTE */
+  .big-quote {
+    padding: 80px 24px;
+    text-align: center;
+    position: relative;
+    background: radial-gradient(ellipse at center, rgba(139,0,0,0.12) 0%, transparent 70%);
+  }
+
+  .big-quote blockquote {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 700;
+    font-size: clamp(1.2rem, 4vw, 2.2rem);
+    line-height: 1.4;
+    color: var(--bone);
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .big-quote blockquote::before {
+    content: '"';
+    position: absolute;
+    top: -40px;
+    left: -20px;
+    font-size: 8rem;
+    color: var(--crimson);
+    opacity: 0.3;
+    font-family: Georgia, serif;
+    line-height: 1;
+  }
+
+  .big-quote .quote-author {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    margin-top: 24px;
+    opacity: 0.7;
+  }
+
+  /* PERSONALITY */
+  .personality-section {
+    background: var(--dark2);
+    padding: 80px 24px;
+  }
+
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 32px;
+    margin-bottom: 40px;
+  }
+
+  .tag {
+    padding: 8px 20px;
+    border: 1px solid rgba(220,20,60,0.4);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.95rem;
+    letter-spacing: 0.15em;
+    color: var(--crimson);
+    text-transform: uppercase;
+    background: rgba(220,20,60,0.05);
+    transition: all 0.2s;
+  }
+
+  .tag:hover {
+    background: rgba(220,20,60,0.15);
+    border-color: var(--crimson);
+  }
+
+  .tag.gold-tag {
+    color: var(--gold);
+    border-color: rgba(201,168,60,0.4);
+    background: rgba(201,168,60,0.05);
+  }
+
+  .tag.gold-tag:hover {
+    background: rgba(201,168,60,0.1);
+    border-color: var(--gold);
+  }
+
+  .personality-text {
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: var(--text);
+    font-weight: 300;
+    max-width: 800px;
+  }
+
+  .personality-text + .personality-text {
+    margin-top: 20px;
+  }
+
+  .highlight {
+    color: var(--crimson);
+    font-weight: 600;
+  }
+
+  .highlight-gold {
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* MUSIC */
+  .music-section {
+    padding: 80px 24px;
+    background: linear-gradient(180deg, var(--dark) 0%, #0d0005 100%);
+  }
+
+  .genre-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 32px;
+  }
+
+  .genre-tag {
+    padding: 10px 18px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--text);
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+
+  .genre-tag:hover {
+    background: rgba(139,0,0,0.2);
+    border-color: rgba(220,20,60,0.5);
+    color: var(--bone);
+  }
+
+  .music-desc {
+    margin-top: 40px;
+    font-size: 1.05rem;
+    line-height: 1.9;
+    color: var(--text);
+    font-weight: 300;
+    max-width: 760px;
+    border-left: 3px solid rgba(201,168,60,0.5);
+    padding-left: 24px;
+  }
+
+  /* FINAL QUOTE */
+  .final-section {
+    padding: 100px 24px;
+    text-align: center;
+    background: radial-gradient(ellipse at 50% 0%, rgba(139,0,0,0.2) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 100%, rgba(201,168,60,0.1) 0%, transparent 60%);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .final-section::before {
+    content: '👑';
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 3rem;
+    opacity: 0.15;
+  }
+
+  .throne-quote {
+    font-family: 'Unbounded', sans-serif;
+    font-weight: 900;
+    font-size: clamp(1rem, 3vw, 1.6rem);
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    line-height: 1.5;
+    max-width: 700px;
+    margin: 0 auto;
+    text-shadow: 0 0 40px rgba(201,168,60,0.4);
+  }
+
+  .throne-sub {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: var(--text);
+    opacity: 0.5;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+  }
+
+  /* CLOSING ID */
+  .closing {
+    padding: 40px 24px 60px;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .closing .name-stamp {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 10vw, 7rem);
+    letter-spacing: 0.1em;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(201,168,60,0.3);
+    line-height: 1;
+  }
+
+  .closing .sub-stamp {
+    font-family: 'Raleway', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.5em;
+    color: rgba(255,255,255,0.2);
+    text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  /* scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="scales-bg"></div>
+
+  <div class="warning-strip">
+    <span>Не доверять</span>
+    <span>Не флиртовать</span>
+    <span>Не подходить</span>
+    <span>Не трогать</span>
+  </div>
+
+  <div class="hero-title">
+    <span class="label">◆ Знакомство с персонажем ◆</span>
+    <h1>САЙМОН<br><span>СМОУК</span></h1>
+  </div>
+  <div class="hero-subtitle">Дракон · Анти-Злодей · Король Монстров</div>
+
+  <div class="divider"></div>
+
+  <div style="font-family:'Raleway',sans-serif; font-size:1.1rem; color:rgba(212,197,176,0.6); letter-spacing:0.1em; font-weight:300; position:relative; z-index:2;">
+    Готик-панк &nbsp;·&nbsp; Дарк-нарциссизм &nbsp;·&nbsp; Трэш-андеграунд
+  </div>
+</section>
+
+
+<!-- INTRO -->
+<section class="section" style="background:var(--dark2);">
+  <div class="container reveal">
+    <div class="section-label">01 — Кто это вообще</div>
+    <h2 class="section-title">Коктейль <span class="red">чистого</span><br>безумия</h2>
+
+    <div class="intro-card">
+      <p>
+        Дракон Саймон Смоук — это <strong>коктейль чистого безумия</strong>, в бокале которого смешались самые резкие и запрещённые ингредиенты: готик-панк, дарк-нарциссизм и трэш-андеграунд.<br><br>
+        Персонаж, которого нельзя игнорировать. Его существование само по себе — <strong>вызов всему разумному</strong>. Он живёт ради внимания, хаоса и собственного величия — и не стесняется этого ни секунды.
+      </p>
+    </div>
+
+    <div class="warning-block">
+      <div class="warning-item">
+        <span class="icon">🚫</span>
+        <strong>Не доверять</strong>
+      </div>
+      <div class="warning-item">
+        <span class="icon">💋</span>
+        <strong>Не флиртовать</strong>
+      </div>
+      <div class="warning-item">
+        <span class="icon">👣</span>
+        <strong>Не подходить</strong>
+      </div>
+      <div class="warning-item">
+        <span class="icon">✋</span>
+        <strong>Не трогать</strong>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- APPEARANCE -->
+<section class="section appearance-bg">
+  <div class="container reveal">
+    <div class="section-label">02 — Внешность</div>
+    <h2 class="section-title">Хаос, <span class="gold">заточенный</span><br>в чешую</h2>
+
+    <div class="trait-grid">
+      <div class="trait-card">
+        <span class="trait-icon">💎</span>
+        <h3>Украшения & Пирсинг</h3>
+        <p>Пирсинг в брови, проколотое ухо, массивный золотой доллар на груди. Всё из благородного металла — кричит о цене, власти и показном богатстве.</p>
+      </div>
+      <div class="trait-card">
+        <span class="trait-icon">🔪</span>
+        <h3>Когти</h3>
+        <p>Ядовито-кровавого оттенка, остро заточенные, покрытые глянцевым лаком. Блестят как лезвие ножа — исключительно для устрашения.</p>
+      </div>
+      <div class="trait-card">
+        <span class="trait-icon">🔥</span>
+        <h3>Грива</h3>
+        <p>Яркий панк-ирокез, спускающийся длинными волнистыми шёлковыми прядями — как пылающее пламя, извивающееся на ветру.</p>
+      </div>
+      <div class="trait-card">
+        <span class="trait-icon">👑</span>
+        <h3>Рога & Шипы</h3>
+        <p>Загнутые рога — орудие тирана. Костяные шипы вдоль хвоста. Всё отполировано до блеска тысячи солнц, излучает ауру тёмных намерений.</p>
+      </div>
+      <div class="trait-card">
+        <span class="trait-icon">🌋</span>
+        <h3>Тело</h3>
+        <p>Рельефное и грациозное. Как спящий древний вулкан — угрожающий, бурлящий внутри, готовый в любой момент проснуться и сжечь всё на пути.</p>
+      </div>
+      <div class="trait-card">
+        <span class="trait-icon">⚡</span>
+        <h3>Общая Аура</h3>
+        <p>Его вид кричит без слов: <em>«Лучше заткнись, здесь правила диктую я»</em>. Воплощение свободы и самовыражения без компромиссов.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- BIG QUOTE -->
+<div class="big-quote reveal">
+  <blockquote>
+    «Склонись, или я устрою Масленицу в твою честь, чучело»
+  </blockquote>
+  <div class="quote-author">— Саймон Смоук, Самопровозглашённый Златорогий-Босс</div>
+</div>
+
+
+<!-- PERSONALITY -->
+<section class="personality-section">
+  <div class="container reveal">
+    <div class="section-label">03 — Характер</div>
+    <h2 class="section-title">Трикстер.<br><span class="red">Анти-злодей.</span><br>Король <span class="gold">эпатажа.</span></h2>
+
+    <div class="tag-cloud">
+      <div class="tag">Манипулятор</div>
+      <div class="tag">Двуличный</div>
+      <div class="tag">Нарцисс</div>
+      <div class="tag gold-tag">Харизматичный</div>
+      <div class="tag">Саркастичный</div>
+      <div class="tag gold-tag">Хитрый</div>
+      <div class="tag">Непредсказуемый</div>
+      <div class="tag gold-tag">Лидер</div>
+      <div class="tag">Дерзкий</div>
+      <div class="tag">Без цензуры</div>
+    </div>
+
+    <p class="personality-text">
+      Саймон — <span class="highlight">чистокровный трикстер</span> и прирождённый анти-злодей. Мастерски манипулирует, демонстративно хвастается и живёт исключительно ради внимания к своему величию — как глэм-рокер на стероидах или инфлюэнсер из самого тёмного уголка интернета.
+    </p>
+
+    <p class="personality-text">
+      Его жуткая <span class="highlight">двуличность</span> — это тонкое ювелирное искусство. То мрачный гот, то панк-бунтарь, то пацан с района, который роняет фразы в стиле: <em>«Жизнь несправедлива, а я тот, кто отобрал у тебя всё — медленно и мучительно».</em>
+    </p>
+
+    <p class="personality-text">
+      Он <span class="highlight-gold">плюёт на нормы</span>, смеётся над системой и делает всё возможное, чтобы его имя вечно гремело в легендах — как самого богатого, самого сильного и самого жестокого рогатого короля монстров во вселенной.
+    </p>
+
+    <p class="personality-text">
+      Всегда на шаг впереди в своих коварных планах, оставляя за собой шлейф <span class="highlight">полного хаоса</span> и мрачной харизмы.
+    </p>
+  </div>
+</section>
+
+
+<!-- MUSIC -->
+<section class="music-section">
+  <div class="container reveal">
+    <div class="section-label">04 — Музыка</div>
+    <h2 class="section-title">Саундтрек <span class="red">апокалипсиса</span></h2>
+
+    <div class="genre-grid">
+      <div class="genre-tag">Dark Trap</div>
+      <div class="genre-tag">Horrorcore</div>
+      <div class="genre-tag">Industrial Metal</div>
+      <div class="genre-tag">Nu-Metal</div>
+      <div class="genre-tag">Glam Rock</div>
+      <div class="genre-tag">Punk Rock</div>
+      <div class="genre-tag">Symphonic Black Metal</div>
+      <div class="genre-tag">Djent</div>
+      <div class="genre-tag">Blackgaze</div>
+      <div class="genre-tag">Post-Hardcore</div>
+      <div class="genre-tag">Darkwave</div>
+      <div class="genre-tag">Trap Hip-Hop</div>
+      <div class="genre-tag">Demoncore</div>
+      <div class="genre-tag">Cybergrind</div>
+      <div class="genre-tag">Breakcore</div>
+      <div class="genre-tag">Glitchcore</div>
+      <div class="genre-tag">Aggrotech</div>
+    </div>
+
+    <div class="music-desc">
+      Музыка — его билет на большую сцену, где шквал эмоций и звуков правит миром. Всё, что способно рвать ушные перепонки тяжёлыми риффами, жуткими синтами и рваным вайбом.<br><br>
+      Личный плейлист Саймона — это саундтрек к грядущему постапокалипсису, где он не просто участник, а <strong>главный пророк-антихрист</strong> грядущего адского пламени.
+    </div>
+  </div>
+</section>
+
+
+<!-- FINAL -->
+<section class="final-section reveal">
+  <div class="container">
+    <div class="divider gold" style="margin-bottom:60px;"></div>
+    <div class="throne-quote">
+      «Самопровозглашённый<br>Златорогий-Босс,<br>захвативший власть<br>под угрозой жизни или смерти»
+    </div>
+    <div class="throne-sub">Шутит ли он? Трудно сказать. Чаще всего — нет.</div>
+  </div>
+</section>
+
+
+<!-- CLOSING -->
+<div class="closing">
+  <div class="name-stamp">SIMON SMOKE</div>
+  <div class="sub-stamp">◆ Дракон · Индивидуалист · Легенда ◆</div>
+</div>
+
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
